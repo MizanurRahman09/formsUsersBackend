@@ -6,17 +6,16 @@ require('dotenv').config(); // Load environment variables from .env
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173', // Set your React app URL
+    credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routers
 const router = require('./routes/userRouter.js');
 app.use('/api', router); // Prefix all routes with /api
-
-app.get('/', (req, res) => {
-    res.json({ message: "Hello" });
-});
 
 // Start server
 app.listen(port, () => {

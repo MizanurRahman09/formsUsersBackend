@@ -40,25 +40,32 @@ const signIn = async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        // Find the user in the database
         const user = await User.findOne({ where: { email } });
         if (!user) {
+            // User not found
             return res.status(404).send({ message: 'User not found' });
         }
 
+        // Check if the password matches
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).send({ message: 'Invalid credentials' });
         }
 
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        // Generate JWT token and send response
+        const token = jwt.sign({ id: user.id, isAdmin: user.isAdmin }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
         res.status(200).send({
             message: 'Sign in successful',
             user: {
                 id: user.id,
                 username: user.username,
                 email: user.email,
+                isAdmin: user.isAdmin,
+                isBlocked: user.isBlocked // Add this to prevent blocked users from logging in
             },
-            token,
+            token
         });
     } catch (error) {
         console.error(error);

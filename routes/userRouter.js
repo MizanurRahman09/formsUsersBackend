@@ -13,3 +13,4 @@ router.put('/block/:id', authenticateToken, userController.toggleBlockUser); // 
 router.delete('/delete/:id', authenticateToken, userController.deleteUser); // Delete user
 
 module.exports = router;
+
